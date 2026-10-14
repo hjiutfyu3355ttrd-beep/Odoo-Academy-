@@ -4,11 +4,15 @@
 (function () {
   'use strict';
 
-  function init() {
+  async function init() {
     AppState.init();
+    await Auth.bootstrap();
 
     // Register routes
     Router.register('/landing', () => UI.renderLanding());
+    Router.register('/login', () => Auth.renderAuth('login'));
+    Router.register('/register', () => Auth.renderAuth('register'));
+    Router.register('/admin', () => Auth.renderAdmin());
     Router.register('/dashboard', () => UI.renderDashboard());
     Router.register('/paths', () => UI.renderPaths());
     Router.register('/path/:id', (parts) => UI.renderPath(parts[1]));
@@ -94,16 +98,12 @@
 
     // Subscribe to state changes for header
     AppState.subscribe(() => UI.renderShell());
+    Auth.updateChrome();
 
     // First visit → landing if no significant progress
     const hash = window.location.hash;
     if (!hash || hash === '#' || hash === '#/') {
-      const s = AppState.get();
-      if (s.progress.completedLessons.length === 0 && s.user.xp <= 120) {
-        Router.navigate('/landing');
-      } else {
-        Router.navigate('/dashboard');
-      }
+      Router.navigate(Auth.isLoggedIn() ? '/dashboard' : '/landing');
     }
   }
 

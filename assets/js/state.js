@@ -25,7 +25,9 @@ const AppState = {
         simulator: {
           sales: { completed: false },
           inventory: { completed: false },
-          purchase: { completed: false }
+          purchase: { completed: false },
+          pos: { completed: false },
+          manufacturing: { completed: false }
         },
         knowledgeChecks: {}
       },

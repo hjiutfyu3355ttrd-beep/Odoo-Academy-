@@ -25,6 +25,8 @@ const AchievementsData = [
 ,
   {id:'path-pos',title:{ar:'كاشير أودو',en:'Odoo Cashier'},description:{ar:'أكمل مسار نقاط البيع',en:'Completed POS path'},icon:'🧾',xp:60,condition:s => (s.pathProgress&&s.pathProgress.pos)>=100},
   {id:'path-project',title:{ar:'مدير مهام',en:'Task Manager'},description:{ar:'أكمل مسار المشاريع',en:'Completed Projects path'},icon:'📋',xp:60,condition:s => (s.pathProgress&&s.pathProgress.project)>=100},
+  {id:'pos-lab',title:{ar:'مختبر نقاط البيع',en:'POS Lab'},description:{ar:'أكملت محاكي نقطة البيع',en:'Completed the POS simulator'},icon:'🖥️',xp:40,condition:s => !!(s.progress.simulator&&s.progress.simulator.pos&&s.progress.simulator.pos.completed)},
+  {id:'mfg-lab',title:{ar:'مختبر التصنيع',en:'Manufacturing Lab'},description:{ar:'أكملت محاكي التصنيع BOM→MO→Done',en:'Completed Manufacturing simulator BOM→MO→Done'},icon:'🏭',xp:50,condition:s => !!(s.progress.simulator&&s.progress.simulator.manufacturing&&s.progress.simulator.manufacturing.completed)},
   {id:'lab-starter',title:{ar:'مختبر أول',en:'First Lab'},description:{ar:'أكملت مختبراً عملياً',en:'Completed a hands-on lab'},icon:'🔬',xp:40,condition:s => (s.progress.completedLessons || []).some(id => String(id).indexOf('lab-') === 0)},
   {id:'path-integrations',title:{ar:'رابط الأنظمة',en:'Systems Linker'},description:{ar:'أكمل مسار التكاملات',en:'Completed Integrations path'},icon:'🔗',xp:60,condition:s => (s.pathProgress&&s.pathProgress.integrations)>=100},
 ];

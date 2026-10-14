@@ -5,7 +5,7 @@
 **Learn Odoo. Practice Odoo. Master Odoo.**
 
 Independent interactive learning platform for Odoo — pure **HTML5**, **CSS3**, and **Vanilla JavaScript**.  
-No frameworks. No backend. Progress is saved in the browser via LocalStorage.
+No frameworks. Accounts (name + phone + password), cloud progress sync and an admin dashboard run on Supabase (RPC functions, no direct table access).
 
 > Odoo Academy is an **independent educational product**. It is **not** affiliated with or endorsed by Odoo S.A.
 
@@ -125,3 +125,11 @@ See `LICENSE` for terms applicable to this repository’s code.
 - Deeper multi-step simulators
 - Optional service worker for offline use
 - Real payment provider (Stripe / Paddle) for Pro plans
+
+---
+
+## Accounts & Admin
+
+- Sign up with **name + phone + password**; each user has a private account and synced progress.
+- The **first account registered becomes the admin** → sidebar shows the Admin dashboard (users list, search, CSV export, reset password, delete).
+- Backend: Supabase tables `academy_users`, `academy_sessions`, `academy_login_attempts` (RLS on, no direct access) + `academy_*` RPC functions.

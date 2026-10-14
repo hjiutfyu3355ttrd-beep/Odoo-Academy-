@@ -398,6 +398,7 @@ const UI = {
               <button class="lang-btn ${this.lang()==='ar'?'active':''}" data-lang="ar">العربية</button>
               <button class="lang-btn ${this.lang()==='en'?'active':''}" data-lang="en">English</button>
             </div>
+            ${Auth.landingButtons()}
             <button class="theme-toggle" id="theme-toggle-landing" aria-label="Toggle theme">${AppState.get().settings.theme==='dark'?'☀️':'🌙'}</button>
           </div>
         </header>
@@ -878,6 +879,7 @@ const UI = {
     const clickInv = locked ? "UI.showUpgradeModal(UI.t('lockedFeatureMsg'))" : "Router.navigate('/lab/inventory')";
     const clickPos = locked ? "UI.showUpgradeModal(UI.t('lockedFeatureMsg'))" : "Router.navigate('/lab/pos')";
     const clickCust = locked ? "UI.showUpgradeModal(UI.t('lockedFeatureMsg'))" : "Router.navigate('/lab/customer')";
+    const clickMfg = locked ? "UI.showUpgradeModal(UI.t('lockedFeatureMsg'))" : "Router.navigate('/lab/manufacturing')";
     document.getElementById('main-content').innerHTML = `
       <div class="page-content">
         <div class="flex justify-between items-center mb-4" style="flex-wrap:wrap;gap:0.75rem">
@@ -891,13 +893,13 @@ const UI = {
             <p class="text-sm text-muted">Create a quotation for ABC Company — 3 Laptops — Confirm</p>
             <button class="btn ${locked ? 'btn-secondary' : 'btn-primary'} btn-sm mt-2">${locked ? this.t('unlockPro') : this.t('startLab')}</button>
           </div>
-          
           <div class="path-card ${locked ? 'locked' : ''}" onclick="${clickPos}">
             <img class="path-icon-img" src="assets/icons/pos.svg" alt="POS" width="40" height="40">
             <h3>${this.lang()==='ar'?'محاكي نقطة البيع':'POS Simulator'} ${locked ? '<span class="lock-badge">🔒 Pro</span>' : ''}</h3>
             <p class="text-sm text-muted">${this.lang()==='ar'?'جلسة → منتجات → دفع → إغلاق':'Session → products → pay → close'}</p>
+            <button class="btn ${locked ? 'btn-secondary' : 'btn-primary'} btn-sm mt-2">${locked ? this.t('unlockPro') : this.t('startLab')}</button>
           </div>
-<div class="path-card ${locked ? 'locked' : ''}" onclick="${clickInv}">
+          <div class="path-card ${locked ? 'locked' : ''}" onclick="${clickInv}">
             <img class="path-icon-img" src="assets/icons/inventory.svg" alt="Inventory" width="40" height="40">
             <h3>${this.t('inventorySimulator')} ${locked ? '<span class="lock-badge">🔒 Pro</span>' : ''}</h3>
             <p class="text-sm text-muted">Receive 10 units of Laptop into Main Warehouse</p>
@@ -913,6 +915,12 @@ const UI = {
             <img class="path-icon-img" src="assets/icons/purchase.svg" alt="Purchase" width="40" height="40">
             <h3>${this.lang()==='ar'?'محاكي المشتريات':'Purchase Simulator'} ${locked ? '<span class="lock-badge">🔒 Pro</span>' : ''}</h3>
             <p class="text-sm text-muted">${this.lang()==='ar'?'RFQ للمورد ABC Supplier — Laptop × 5 — Confirm':'RFQ for ABC Supplier — Laptop × 5 — Confirm'}</p>
+            <button class="btn ${locked ? 'btn-secondary' : 'btn-primary'} btn-sm mt-2">${locked ? this.t('unlockPro') : this.t('startLab')}</button>
+          </div>
+          <div class="path-card ${locked ? 'locked' : ''}" onclick="${clickMfg}">
+            <img class="path-icon-img" src="assets/icons/stock.svg" alt="Manufacturing" width="40" height="40">
+            <h3>${this.lang()==='ar'?'محاكي التصنيع':'Manufacturing Simulator'} ${locked ? '<span class="lock-badge">🔒 Pro</span>' : ''}</h3>
+            <p class="text-sm text-muted">${this.lang()==='ar'?'BOM → MO × 2 Laptop → Confirm → Done':'BOM → MO × 2 Laptop → Confirm → Done'}</p>
             <button class="btn ${locked ? 'btn-secondary' : 'btn-primary'} btn-sm mt-2">${locked ? this.t('unlockPro') : this.t('startLab')}</button>
           </div>
         </div>
@@ -932,6 +940,7 @@ const UI = {
     else if (labId === 'customer') this.renderCustomerLab();
     else if (labId === 'purchase') this.renderPurchaseSimulator();
     else if (labId === 'pos') this.renderPOSSimulator();
+    else if (labId === 'manufacturing') this.renderManufacturingSimulator();
     else Router.navigate('/practice');
   },
 
@@ -1187,6 +1196,146 @@ const UI = {
     }
   },
 
+  renderPOSSimulator() {
+    Simulator.reset();
+    Simulator.setModule('pos');
+    const ar = this.lang() === 'ar';
+    const render = () => {
+      const st = Simulator.state;
+      const cartHtml = (st.posCart || []).map(l =>
+        `<div class="flex justify-between text-sm"><span>${l.name} × ${l.qty}</span><span>${l.price * l.qty}</span></div>`
+      ).join('') || `<p class="text-sm text-muted">${ar ? 'العربة فارغة' : 'Cart empty'}</p>`;
+      document.getElementById('main-content').innerHTML = `
+        <div class="page-content">
+          <button class="btn btn-ghost btn-sm mb-3" onclick="Router.navigate('/practice')">← ${this.t('back')}</button>
+          <h1 class="mb-3">${ar ? 'محاكي نقطة البيع' : 'POS Simulator'}</h1>
+          <div class="mission-box">
+            <h4>${this.t('mission')}</h4>
+            <p>${ar ? 'افتح الجلسة → أضف منتجاً → ادفع → أغلق الجلسة (مثل شاشة POS في أودو).' : 'Open session → add a product → pay → close session (like the Odoo POS screen).'}</p>
+          </div>
+          <div class="sim-steps">
+            <div class="sim-step ${st.posSessionOpen || st.posMissionComplete ? 'done' : 'active'}">1. ${ar ? 'فتح الجلسة' : 'Open'}</div>
+            <div class="sim-step ${st.posCart.length || st.posMissionComplete ? 'done' : ''} ${st.posSessionOpen && !st.posCart.length ? 'active' : ''}">2. ${ar ? 'منتجات' : 'Products'}</div>
+            <div class="sim-step ${st.posPaid || st.posMissionComplete ? 'done' : ''} ${st.posCart.length && !st.posPaid ? 'active' : ''}">3. ${ar ? 'دفع' : 'Pay'}</div>
+            <div class="sim-step ${st.posMissionComplete ? 'done' : ''} ${st.posPaid && st.posSessionOpen ? 'active' : ''}">4. ${ar ? 'إغلاق' : 'Close'}</div>
+          </div>
+          <div class="simulator">
+            <div class="sim-header">Odoo · Point of Sale</div>
+            <div class="sim-body" style="padding:1rem">
+              <div class="sim-form-actions mb-3" style="gap:0.5rem;flex-wrap:wrap">
+                <button class="btn btn-secondary btn-sm" onclick="Simulator.openPosSession();UI._refreshPosSim()">${ar ? 'فتح الجلسة' : 'Open Session'}</button>
+                <button class="btn btn-primary btn-sm" onclick="Simulator.payPos();UI._refreshPosSim()">${ar ? 'دفع' : 'Pay'}</button>
+                <button class="btn btn-secondary btn-sm" onclick="Simulator.closePosSession();UI._refreshPosSim()">${ar ? 'إغلاق الجلسة' : 'Close Session'}</button>
+                <button class="btn btn-success btn-sm" onclick="UI.checkPosMission()">${ar ? 'تحقق من المهمة' : 'Validate Mission'}</button>
+              </div>
+              <p class="text-sm mb-2">${ar ? 'الحالة:' : 'Status:'} <strong>${st.posSessionOpen ? (ar ? 'جلسة مفتوحة' : 'Session open') : (ar ? 'مغلقة' : 'Closed')}</strong>
+                ${st.posPaid ? ' · Paid' : ''} ${st.posMissionComplete ? ' · ✓ Mission path done' : ''}</p>
+              <div class="flex" style="gap:1.5rem;flex-wrap:wrap">
+                <div style="flex:1;min-width:180px">
+                  <h4 class="mb-2">${ar ? 'المنتجات' : 'Products'}</h4>
+                  ${Simulator.products.map(p => `
+                    <button class="btn btn-ghost btn-sm mb-1" style="display:block;width:100%;text-align:start"
+                      onclick="Simulator.addPosProduct('${p.id}');UI._refreshPosSim()">${p.name} — ${p.price}</button>
+                  `).join('')}
+                </div>
+                <div style="flex:1;min-width:180px" class="card">
+                  <h4 class="mb-2">${ar ? 'العربة' : 'Cart'}</h4>
+                  ${cartHtml}
+                  <p class="font-semibold mt-2">${ar ? 'الإجمالي' : 'Total'}: ${st.posTotal || 0}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    };
+    this._refreshPosSim = render;
+    render();
+  },
+
+  checkPosMission() {
+    const result = Simulator.validatePosChallenge();
+    if (result.valid) {
+      AppState.completeSimulator('pos', 100);
+      this.showToast(this.t('missionComplete') + ' +100 XP', 'xp');
+      this.showModal(`<div style="text-align:center"><div style="font-size:3rem">🎉</div><h3>${this.t('missionComplete')}</h3><p>${this.lang()==='ar'?'مسار POS على الشاشة مكتمل.':'POS on-screen flow complete.'}</p></div>`);
+    } else {
+      const msg = result.errors.map(e => '• ' + this.txt(e)).join('<br>');
+      this.showModal(`<div><h4>${this.t('notQuite')}</h4><p class="text-sm text-muted mb-2">${this.lang()==='ar'?'راجع شاشة POS:':'Review the POS screen:'}</p><p class="mt-2">${msg}</p></div>`);
+    }
+  },
+
+  renderManufacturingSimulator() {
+    Simulator.reset();
+    Simulator.setModule('manufacturing');
+    const ar = this.lang() === 'ar';
+    const render = () => {
+      const st = Simulator.state;
+      document.getElementById('main-content').innerHTML = `
+        <div class="page-content">
+          <button class="btn btn-ghost btn-sm mb-3" onclick="Router.navigate('/practice')">← ${this.t('back')}</button>
+          <h1 class="mb-3">${ar ? 'محاكي التصنيع' : 'Manufacturing Simulator'}</h1>
+          <div class="mission-box">
+            <h4>${this.t('mission')}</h4>
+            <p>${ar ? 'Laptop كمنتج نهائي، كمية 2: احفظ BOM → أنشئ MO → Confirm → Mark as Done.' : 'Finished product Laptop, qty 2: save BOM → create MO → Confirm → Mark as Done.'}</p>
+          </div>
+          <div class="sim-steps">
+            <div class="sim-step ${st.mfgBomReady ? 'done' : 'active'}">1. BOM</div>
+            <div class="sim-step ${st.mfgMoCreated ? 'done' : ''} ${st.mfgBomReady && !st.mfgMoCreated ? 'active' : ''}">2. MO</div>
+            <div class="sim-step ${st.mfgMoConfirmed ? 'done' : ''} ${st.mfgMoCreated && !st.mfgMoConfirmed ? 'active' : ''}">3. Confirm</div>
+            <div class="sim-step ${st.mfgDone ? 'done' : ''} ${st.mfgMoConfirmed && !st.mfgDone ? 'active' : ''}">4. Done</div>
+          </div>
+          <div class="simulator">
+            <div class="sim-header">Odoo · Manufacturing</div>
+            <div class="sim-menu">
+              <button class="sim-menu-item ${!st.mfgMoCreated ? 'active' : ''}">Bill of Materials</button>
+              <button class="sim-menu-item ${st.mfgMoCreated ? 'active' : ''}">Manufacturing Orders</button>
+            </div>
+            <div class="sim-body" style="padding:1rem">
+              <div class="sim-form-row">
+                <label>${ar ? 'المنتج النهائي' : 'Finished Product'} *</label>
+                <select onchange="Simulator.selectMfgProduct(this.value);UI._refreshMfgSim()">
+                  <option value="">-- Select --</option>
+                  ${Simulator.products.map(p => `<option value="${p.id}" ${st.mfgProduct?.id===p.id?'selected':''}>${p.name}</option>`).join('')}
+                </select>
+              </div>
+              <div class="sim-form-row">
+                <label>Quantity *</label>
+                <input type="number" min="1" value="${st.mfgQty}" onchange="Simulator.setMfgQty(this.value);UI._refreshMfgSim()">
+              </div>
+              <p class="text-sm text-muted mb-2">${ar ? 'مكونات BOM (توضيحية): لوحة + ذاكرة' : 'BOM components (illustrative): Board + Memory'}</p>
+              <div class="sim-form-actions" style="flex-wrap:wrap;gap:0.5rem">
+                <button class="btn btn-secondary" onclick="Simulator.saveBom();UI._refreshMfgSim();UI.showToast('BOM saved')">${ar ? 'حفظ BOM' : 'Save BOM'}</button>
+                <button class="btn btn-secondary" onclick="Simulator.createMo();UI._refreshMfgSim()">${ar ? 'إنشاء MO' : 'Create MO'}</button>
+                <button class="btn btn-primary" onclick="Simulator.confirmMo();UI._refreshMfgSim()">Confirm</button>
+                <button class="btn btn-success" onclick="Simulator.markMoDone();UI._refreshMfgSim()">Mark as Done</button>
+                <button class="btn btn-primary" onclick="UI.checkMfgMission()">${ar ? 'تحقق من المهمة' : 'Validate Mission'}</button>
+              </div>
+              <div class="mt-3 text-sm">
+                ${st.mfgBomReady ? `<p style="color:var(--success)">✓ BOM ready</p>` : ''}
+                ${st.mfgMoCreated ? `<p style="color:var(--success)">✓ MO created (Draft)</p>` : ''}
+                ${st.mfgMoConfirmed ? `<p style="color:var(--success)">✓ MO Confirmed</p>` : ''}
+                ${st.mfgDone ? `<p style="color:var(--success)">✓ Done — On Hand +${st.mfgQty} for finished product</p>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>`;
+    };
+    this._refreshMfgSim = render;
+    render();
+  },
+
+  checkMfgMission() {
+    const result = Simulator.validateManufacturingChallenge();
+    if (result.valid) {
+      AppState.completeSimulator('manufacturing', 100);
+      this.showToast(this.t('missionComplete') + ' +100 XP', 'xp');
+      this.showModal(`<div style="text-align:center"><div style="font-size:3rem">🏭</div><h3>${this.t('missionComplete')}</h3><p>${this.lang()==='ar'?'BOM → MO → Done مكتمل على مسار الشاشات.':'BOM → MO → Done completed on the screen path.'}</p></div>`);
+    } else {
+      const msg = result.errors.map(e => '• ' + this.txt(e)).join('<br>');
+      this.showModal(`<div><h4>${this.t('notQuite')}</h4><p class="text-sm text-muted mb-2">${this.lang()==='ar'?'راجع شاشات التصنيع:':'Review Manufacturing screens:'}</p><p class="mt-2">${msg}</p></div>`);
+    }
+  },
+
   renderCustomerLab() {
     document.getElementById('main-content').innerHTML = `
       <div class="page-content">
@@ -1267,6 +1416,17 @@ const UI = {
     this.showApp();
     const s = AppState.get();
     const overall = AppState.getOverallProgress();
+    const ar = this.lang() === 'ar';
+    AppState.updatePathProgress();
+    const nextLesson = (LessonsData || []).find(l => !AppState.isLessonComplete(l.id));
+    const sim = s.progress.simulator || {};
+    const simRows = [
+      { id: 'sales', label: ar ? 'مبيعات' : 'Sales', done: sim.sales && sim.sales.completed },
+      { id: 'inventory', label: ar ? 'مخزون' : 'Inventory', done: sim.inventory && sim.inventory.completed },
+      { id: 'purchase', label: ar ? 'مشتريات' : 'Purchase', done: sim.purchase && sim.purchase.completed },
+      { id: 'pos', label: 'POS', done: sim.pos && sim.pos.completed },
+      { id: 'manufacturing', label: ar ? 'تصنيع' : 'Manufacturing', done: sim.manufacturing && sim.manufacturing.completed }
+    ];
     document.getElementById('main-content').innerHTML = `
       <div class="page-content">
         <h1 class="mb-4">${this.t('progress')}</h1>
@@ -1274,16 +1434,35 @@ const UI = {
           <div class="flex justify-between mb-2"><span class="font-semibold">${this.t('overallProgress')}</span><span>${overall}%</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width:${overall}%"></div></div>
         </div>
+        ${nextLesson ? `
+        <div class="card mb-4" style="border-inline-start:4px solid var(--primary,#714B67)">
+          <div class="font-semibold mb-1">${ar ? 'الدرس التالي المقترح' : 'Recommended next lesson'}</div>
+          <p class="text-sm text-muted mb-2">${this.txt(nextLesson.title)}</p>
+          <button class="btn btn-primary btn-sm" onclick="Router.navigate('/lesson/${nextLesson.id}')">${ar ? 'متابعة' : 'Continue'}</button>
+        </div>` : `
+        <div class="card mb-4"><p class="text-sm">${ar ? 'أحسنت — أكملت كل الدروس المتاحة حالياً.' : 'Great — you completed all lessons currently available.'}</p></div>`}
         <div class="stats-grid mb-4">
           <div class="stat-card"><div class="stat-value">${s.user.xp}</div><div class="stat-label">XP</div></div>
           <div class="stat-card"><div class="stat-value">${AppState.getLevelName(s.user.level)}</div><div class="stat-label">${this.t('level')} ${s.user.level}</div></div>
           <div class="stat-card"><div class="stat-value">${s.progress.completedLessons.length}/${LessonsData.length}</div><div class="stat-label">${this.t('lessonsCompleted')}</div></div>
           <div class="stat-card"><div class="stat-value">🔥 ${s.user.streak}</div><div class="stat-label">${this.t('dayStreak')}</div></div>
         </div>
+        <h3 class="mb-3">${ar ? 'المحاكيات' : 'Simulators'}</h3>
+        <div class="card mb-4">
+          ${simRows.map(r => `
+            <div class="flex justify-between items-center mb-2" style="gap:0.5rem">
+              <span class="text-sm">${r.label}</span>
+              <span class="text-sm">${r.done ? '✓' : '—'}
+                ${!r.done ? `<button class="btn btn-ghost btn-sm" onclick="Router.navigate('/lab/${r.id}')">${ar ? 'فتح' : 'Open'}</button>` : ''}
+              </span>
+            </div>`).join('')}
+        </div>
         <h3 class="mb-3">${this.t('learningPaths')}</h3>
         ${PathsData.map(p => {
           const pct = s.pathProgress[p.id] || 0;
           const hasCert = !!(s.certificates || {})[p.id];
+          const pathLessons = (LessonsData || []).filter(l => l.path === p.id);
+          const nextInPath = pathLessons.find(l => !AppState.isLessonComplete(l.id));
           return `
             <div class="card mb-2">
               <div class="flex justify-between mb-1" style="flex-wrap:wrap;gap:0.5rem">
@@ -1291,7 +1470,11 @@ const UI = {
                 <span>${pct}% ${hasCert ? '🎓' : ''}</span>
               </div>
               <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-              ${pct >= 100 ? `<button class="btn btn-secondary btn-sm mt-2" onclick="Router.navigate('/certificate/${p.id}')">${this.t('getCertificate')}</button>` : ''}
+              <div class="flex gap-2 mt-2" style="flex-wrap:wrap">
+                ${pct >= 100
+                  ? `<button class="btn btn-secondary btn-sm" onclick="Router.navigate('/certificate/${p.id}')">${this.t('getCertificate')}</button>`
+                  : (nextInPath ? `<button class="btn btn-primary btn-sm" onclick="Router.navigate('/lesson/${nextInPath.id}')">${ar ? 'أكمل الدرس' : 'Continue lesson'}</button>` : '')}
+              </div>
             </div>
           `;
         }).join('')}

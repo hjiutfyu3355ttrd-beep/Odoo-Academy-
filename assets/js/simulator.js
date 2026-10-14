@@ -18,10 +18,17 @@ const Simulator = {
     posPaid: false,
     posSessionOpen: false,
     posTotal: 0,
+    posMissionComplete: false,
     selectedVendor: null,
     rfqCreated: false,
     rfqConfirmed: false,
-    purchaseQty: 5
+    purchaseQty: 5,
+    mfgProduct: null,
+    mfgQty: 1,
+    mfgBomReady: false,
+    mfgMoCreated: false,
+    mfgMoConfirmed: false,
+    mfgDone: false
   },
 
   customers: [
@@ -65,10 +72,17 @@ const Simulator = {
     posPaid: false,
     posSessionOpen: false,
     posTotal: 0,
+    posMissionComplete: false,
       selectedVendor: null,
       rfqCreated: false,
       rfqConfirmed: false,
-      purchaseQty: 5
+      purchaseQty: 5,
+      mfgProduct: null,
+      mfgQty: 1,
+      mfgBomReady: false,
+      mfgMoCreated: false,
+      mfgMoConfirmed: false,
+      mfgDone: false
     };
   },
 
@@ -202,6 +216,7 @@ const Simulator = {
     this.state.posCart = [];
     this.state.posPaid = false;
     this.state.posTotal = 0;
+    this.state.posMissionComplete = false;
   },
   addPosProduct(id) {
     if (!this.state.posSessionOpen || this.state.posPaid) return;
@@ -219,10 +234,85 @@ const Simulator = {
   },
   closePosSession() {
     if (!this.state.posPaid && this.state.posCart.length) return false;
+    if (this.state.posPaid) this.state.posMissionComplete = true;
     this.state.posSessionOpen = false;
     this.state.posCart = [];
     this.state.posTotal = 0;
     this.state.posPaid = false;
     return true;
+  },
+
+  // Manufacturing: BOM → MO → Confirm → Mark as Done
+  selectMfgProduct(id) {
+    const p = this.products.find(x => x.id === id);
+    this.state.mfgProduct = p || null;
+  },
+  setMfgQty(q) {
+    this.state.mfgQty = Math.max(1, parseInt(q, 10) || 1);
+  },
+  saveBom() {
+    if (!this.state.mfgProduct) return false;
+    this.state.mfgBomReady = true;
+    return true;
+  },
+  createMo() {
+    if (!this.state.mfgBomReady) return false;
+    this.state.mfgMoCreated = true;
+    return true;
+  },
+  confirmMo() {
+    if (!this.state.mfgMoCreated) return false;
+    this.state.mfgMoConfirmed = true;
+    return true;
+  },
+  markMoDone() {
+    if (!this.state.mfgMoConfirmed) return false;
+    this.state.mfgDone = true;
+    return true;
+  },
+  validateManufacturingChallenge() {
+    const s = this.state;
+    const errors = [];
+    if (!s.mfgProduct || s.mfgProduct.name !== 'Laptop') {
+      errors.push({ ar: 'على شاشة BOM / MO: المنتج النهائي يجب أن يكون Laptop (Finished Product).', en: 'On BOM/MO screen: finished product must be Laptop.' });
+    }
+    if (s.mfgQty !== 2) {
+      errors.push({ ar: 'الكمية على أمر التصنيع يجب أن تكون 2 — راجع Quantity على رأس الشاشة.', en: 'Quantity on the Manufacturing Order must be 2 — check header Quantity.' });
+    }
+    if (!s.mfgBomReady) {
+      errors.push({ ar: 'احفظ BOM أولاً (مكونات المنتج) قبل إنشاء أمر التصنيع — كما في أودو.', en: 'Save the BOM first (components) before creating the MO — as in Odoo.' });
+    }
+    if (!s.mfgMoCreated) {
+      errors.push({ ar: 'أنشئ Manufacturing Order من المنتج/BOM (New على قائمة MO).', en: 'Create a Manufacturing Order from the product/BOM (New on MO list).' });
+    }
+    if (!s.mfgMoConfirmed) {
+      errors.push({ ar: 'اضغط Confirm على أمر التصنيع لتثبيت المكونات والحالة Confirmed.', en: 'Click Confirm on the MO to lock components and set Confirmed.' });
+    }
+    if (!s.mfgDone) {
+      errors.push({ ar: 'اضغط Mark as Done — بعدها يزداد On Hand للمنتج النهائي وتنقص المكونات.', en: 'Click Mark as Done — then finished-product On Hand rises and components decrease.' });
+    }
+    return { valid: errors.length === 0, errors };
+  },
+
+  validatePosChallenge() {
+    const s = this.state;
+    if (s.posMissionComplete) return { valid: true, errors: [] };
+    const errors = [];
+    if (!s.posSessionOpen && !s.posPaid) {
+      errors.push({ ar: 'افتح جلسة POS أولاً (Open Session) كما على شاشة نقطة البيع.', en: 'Open a POS session first (Open Session) as on the Point of Sale screen.' });
+    }
+    if (s.posSessionOpen && s.posCart.length === 0) {
+      errors.push({ ar: 'أضف منتجاً واحداً على الأقل إلى العربة من كتالوج POS.', en: 'Add at least one product to the cart from the POS catalog.' });
+    }
+    if (s.posCart.length > 0 && !s.posPaid) {
+      errors.push({ ar: 'اضغط Pay بعد إضافة المنتجات — قبل إغلاق الجلسة.', en: 'Click Pay after adding products — before closing the session.' });
+    }
+    if (s.posPaid && s.posSessionOpen) {
+      errors.push({ ar: 'أغلق الجلسة (Close Session) بعد الدفع لإكمال المسار على الشاشة.', en: 'Close Session after payment to complete the on-screen flow.' });
+    }
+    if (!errors.length) {
+      errors.push({ ar: 'أكمل: فتح جلسة → منتج → دفع → إغلاق.', en: 'Complete: open session → product → pay → close.' });
+    }
+    return { valid: false, errors };
   },
 };
