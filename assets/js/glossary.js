@@ -1,0 +1,35 @@
+/**
+ * Odoo Academy — Glossary (Functional + Technical)
+ */
+const GlossaryData = [
+  {id:'model',term:{ar:'النموذج (Model)',en:'Model'},def:{ar:'كيان بيانات في أودو (مثل sale.order). الشاشة تعرضه عبر Views.',en:'A data entity in Odoo (e.g. sale.order). Screens display it via Views.'},tech:'Python class + database table',path:'technical'},
+  {id:'field',term:{ar:'الحقل (Field)',en:'Field'},def:{ar:'عمود على الـ Model يظهر على Form/List. أنواع: Char, Many2one, One2many, Monetary…',en:'A column on the Model shown on Form/List. Types: Char, Many2one, One2many, Monetary…'},tech:'fields.*',path:'technical'},
+  {id:'many2one',term:{ar:'Many2one',en:'Many2one'},def:{ar:'علاقة سجل واحد بجدول آخر (مثل partner_id → res.partner). قائمة منسدلة على الشاشة.',en:'Link to one record in another model (e.g. partner_id → res.partner). Dropdown on screen.'},tech:'fields.Many2one',path:'technical'},
+  {id:'one2many',term:{ar:'One2many',en:'One2many'},def:{ar:'جدول بنود مرتبط بالرأس (مثل order_line على sale.order).',en:'Lines table related to a header (e.g. order_line on sale.order).'},tech:'fields.One2many',path:'technical'},
+  {id:'view',term:{ar:'العرض (View)',en:'View'},def:{ar:'تعريف XML لشكل الشاشة: list, form, kanban, search, graph, pivot.',en:'XML definition of screen shape: list, form, kanban, search, graph, pivot.'},tech:'ir.ui.view',path:'technical'},
+  {id:'action',term:{ar:'الإجراء (Action)',en:'Action'},def:{ar:'ما يفتحه القائمة أو الزر: غالباً Window Action على Model مع view_mode.',en:'What a menu or button opens: often a Window Action on a Model with view_mode.'},tech:'ir.actions.act_window',path:'technical'},
+  {id:'menu',term:{ar:'القائمة (Menu)',en:'Menu'},def:{ar:'عنصر التنقل في الشريط الجانبي/التطبيقات. يظهر حسب المجموعات.',en:'Navigation item in apps/sidebar. Visibility depends on groups.'},tech:'ir.ui.menu',path:'technical'},
+  {id:'acl',term:{ar:'صلاحيات النموذج (Access Rights)',en:'Access Rights (ACL)'},def:{ar:'Read/Write/Create/Delete على مستوى الـ Model لمجموعة.',en:'Read/Write/Create/Delete on a Model for a group.'},tech:'ir.model.access',path:'fundamentals'},
+  {id:'record-rule',term:{ar:'قاعدة السجلات (Record Rule)',en:'Record Rule'},def:{ar:'Domain يقيّد أي صفوف يراها المستخدم (مثل سجلاته فقط أو شركته).',en:'Domain limiting which rows a user sees (e.g. own records or company).'},tech:'ir.rule',path:'fundamentals'},
+  {id:'group',term:{ar:'المجموعة (Group)',en:'Security Group'},def:{ar:'دور يُمنح للمستخدم ويجمع صلاحيات وقوائم وقواعد.',en:'A role assigned to users bundling rights, menus and rules.'},tech:'res.groups',path:'fundamentals'},
+  {id:'partner',term:{ar:'الشريك (Partner)',en:'Partner'},def:{ar:'عميل أو مورد أو عنوان في res.partner. أساس Contacts.',en:'Customer, vendor or address in res.partner. Basis of Contacts.'},tech:'res.partner',path:'fundamentals'},
+  {id:'sale-order',term:{ar:'أمر البيع / العرض',en:'Sales Order / Quotation'},def:{ar:'نفس Model sale.order؛ الحالة state تفرق بين عرض وأمر مؤكد.',en:'Same Model sale.order; state distinguishes quotation vs confirmed order.'},tech:'sale.order',path:'sales'},
+  {id:'stock-picking',term:{ar:'عملية المخزون (Picking)',en:'Stock Picking'},def:{ar:'استلام أو تسليم أو تحويل. Validate يغيّر الكميات.',en:'Receipt, delivery or transfer. Validate changes quantities.'},tech:'stock.picking',path:'inventory'},
+  {id:'on-hand',term:{ar:'الكمية المتوفرة (On Hand)',en:'On Hand'},def:{ar:'الكمية في المخزون للمنتج/الموقع. تتغير بالحركات لا بالتعديل اليدوي اليومي.',en:'Qty in stock for product/location. Changes via moves, not daily manual edits.'},tech:'qty_available (approx)',path:'inventory'},
+  {id:'bom',term:{ar:'قائمة المواد (BOM)',en:'Bill of Materials'},def:{ar:'وصفة المكونات للمنتج النهائي في التصنيع.',en:'Component recipe for a finished product in manufacturing.'},tech:'mrp.bom',path:'manufacturing'},
+  {id:'mo',term:{ar:'أمر التصنيع (MO)',en:'Manufacturing Order'},def:{ar:'طلب إنتاج كمية؛ يستهلك مكوّنات وينتج تام بعد Done.',en:'Production request; consumes components and produces finished goods after Done.'},tech:'mrp.production',path:'manufacturing'},
+  {id:'account-move',term:{ar:'القيد / الفاتورة',en:'Journal Entry / Invoice'},def:{ar:'account.move يغطي الفواتير والقيود. الحالات Draft → Posted.',en:'account.move covers invoices and entries. States Draft → Posted.'},tech:'account.move',path:'accounting'},
+  {id:'journal',term:{ar:'دفتر اليومية (Journal)',en:'Journal'},def:{ar:'تصنيف القيود: مبيعات، مشتريات، بنك، نقدية…',en:'Entry classification: sales, purchase, bank, cash…'},tech:'account.journal',path:'accounting'},
+  {id:'smart-button',term:{ar:'الزر الذكي',en:'Smart Button'},def:{ar:'زر إحصاء على Form يفتح سجلات مرتبطة (تسليم، فاتورة…).',en:'Stat button on Form opening related records (delivery, invoice…).'},tech:'button with statinfo',path:'fundamentals'},
+  {id:'chatter',term:{ar:'المحادثة (Chatter)',en:'Chatter'},def:{ar:'رسائل وملاحظات وأنشطة أسفل النموذج.',en:'Messages, notes and activities below the form.'},tech:'mail.thread',path:'fundamentals'},
+  {id:'studio',term:{ar:'الاستوديو (Studio)',en:'Odoo Studio'},def:{ar:'تخصيص واجهي بدون كود (Enterprise غالباً). للتعقيد الدائم يُفضَّل الكود.',en:'UI customization without code (often Enterprise). For lasting complexity prefer code.'},tech:'web_studio',path:'technical'},
+  {id:'inheritance',term:{ar:'الوراثة (Inheritance)',en:'Inheritance'},def:{ar:'امتداد Model أو View بدون نسخ الملف الأصلي (_inherit / xpath).',en:'Extend Model or View without copying the original (_inherit / xpath).'},tech:'_inherit, inherit_id',path:'technical'}
+,
+  {id:'pos-session',term:{ar:'جلسة نقطة البيع',en:'POS Session'},def:{ar:'فترة عمل الكاشير من الفتح إلى Close Session مع المبيعات والدفعات.',en:'Cashier work period from open to Close Session with sales and payments.'},tech:'pos.session',path:'pos'},
+  {id:'project-task',term:{ar:'مهمة مشروع',en:'Project Task'},def:{ar:'وحدة عمل داخل مشروع بمراحل Kanban ومسؤول.',en:'Work unit inside a project with Kanban stages and assignee.'},tech:'project.task',path:'project'},
+  {id:'timesheet',term:{ar:'جدول زمني',en:'Timesheet'},def:{ar:'تسجيل ساعات على مهمة/مشروع للتحليل أو الفوترة.',en:'Hours logged on a task/project for analysis or billing.'},tech:'account.analytic.line (timesheet)',path:'project'}
+,
+  {id:'route-odoo',term:{ar:'مسار المخزون (Route)',en:'Inventory Route'},def:{ar:'طريقة تلبية الطلب: شراء، تصنيع، أو نقل بين مواقع/مستودعات.',en:'How demand is fulfilled: buy, manufacture, or move between locations/warehouses.'},tech:'stock.route',path:'inventory'},
+  {id:'warehouse',term:{ar:'المستودع',en:'Warehouse'},def:{ar:'كيان تشغيلي يضم مواقع تخزين واستلام وتسليم.',en:'Operational entity containing storage, input and output locations.'},tech:'stock.warehouse',path:'inventory'},
+  {id:'external-api',term:{ar:'واجهة برمجة خارجية',en:'External API'},def:{ar:'الوصول لأودو من نظام آخر مع نفس نماذج البيانات والصلاحيات.',en:'Access Odoo from another system with the same data models and rights.'},tech:'XML-RPC / JSON-2',path:'integrations'}
+];

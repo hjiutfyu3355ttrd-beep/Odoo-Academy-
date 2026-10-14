@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Odoo Academy - Independent interactive learning platform for Odoo. Learn Odoo. Practice Odoo. Master Odoo.">
+  <title>Odoo Academy — Learn. Practice. Master.</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Landing (shown first) -->
+  <div id="landing-page"></div>
+
+  <!-- App Shell -->
+  <div id="app-shell" class="hidden">
+    <header class="app-header" role="banner">
+      <div class="header-left">
+        <button class="btn btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="Toggle menu">☰</button>
+        <a href="#/dashboard" class="logo">
+          <div class="logo-icon">OA</div>
+          <span>Odoo Academy</span>
+        </a>
+      </div>
+      <div class="header-search">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input type="search" id="search-input" placeholder="Search..." autocomplete="off" aria-label="Search">
+        <div class="search-results" id="search-results" role="listbox"></div>
+      </div>
+      <div class="header-right">
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn" data-lang="ar">العربية</button>
+          <button class="lang-btn" data-lang="en">English</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">🌙</button>
+        <div class="xp-badge" title="Experience Points">⚡ <span id="xp-display">0</span></div>
+        <button class="user-menu" aria-label="User menu">
+          <div class="user-avatar" id="user-avatar">O</div>
+          <span id="user-name-display" class="text-sm">Odoo Learner</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+      <nav class="sidebar-nav">
+        <a class="nav-item" data-route="dashboard" href="#/dashboard">
+          <img class="nav-icon-img nav-icon" src="assets/icons/dashboard.svg" alt=""><span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-route="paths" href="#/paths">
+          <img class="nav-icon-img nav-icon" src="assets/icons/fundamentals.svg" alt=""><span>Learning</span>
+        </a>
+          <a class="nav-item" data-route="glossary" href="#/glossary">
+            <span class="nav-icon" style="font-size:1.1rem">📖</span><span>Glossary</span>
+          </a>
+        <a class="nav-item" data-route="practice" href="#/practice">
+          <img class="nav-icon-img nav-icon" src="assets/icons/project.svg" alt=""><span>Practice</span>
+        </a>
+        <a class="nav-item" data-route="quizzes" href="#/quizzes">
+          <img class="nav-icon-img nav-icon" src="assets/icons/project.svg" alt=""><span>Quizzes</span>
+        </a>
+        <a class="nav-item" data-route="achievements" href="#/achievements">
+          <img class="nav-icon-img nav-icon" src="assets/icons/hr.svg" alt=""><span>Achievements</span>
+        </a>
+        <a class="nav-item" data-route="progress" href="#/progress">
+          <img class="nav-icon-img nav-icon" src="assets/icons/account.svg" alt=""><span>Progress</span>
+        </a>
+        <a class="nav-item" data-route="pricing" href="#/pricing">
+          <img class="nav-icon-img nav-icon" src="assets/icons/sales.svg" alt=""><span>Pricing</span>
+        </a>
+        <a class="nav-item" data-route="settings" href="#/settings">
+          <img class="nav-icon-img nav-icon" src="assets/icons/settings.svg" alt=""><span>Settings</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="nav-item" id="sidebar-collapse" aria-label="Collapse sidebar">
+          <span class="nav-icon">◀</span><span>Collapse</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content" id="main-content" role="main"></main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <div id="modal-body"></div>
+      <div class="modal-actions" id="modal-actions"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/state.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/glossary.js"></script>
+  <script src="assets/js/lessons.js"></script>
+  <script src="assets/js/paths.js"></script>
+  <script src="assets/js/quizzes.js"></script>
+  <script src="assets/js/gamification.js"></script>
+  <script src="assets/js/simulator.js"></script>
+  <script src="assets/js/router.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
