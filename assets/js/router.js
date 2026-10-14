@@ -25,7 +25,7 @@ const Router = {
     let matched = false;
 
     // Login required for everything except landing / login / register
-    if (window.Auth && !Auth.isLoggedIn() && !Auth.PUBLIC_ROUTES.includes(parts[0] || 'landing')) {
+    if (typeof Auth !== 'undefined' && !Auth.isLoggedIn() && !Auth.PUBLIC_ROUTES.includes(parts[0] || 'landing')) {
       this.navigate('/login');
       return;
     }
